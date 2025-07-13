@@ -23,15 +23,27 @@ const COLOR_NAMES = {
 };
 
 // Individual cube piece component
-function CubePiece({ position, colors, size = 0.9, onClick, isSelected }) {
+function CubePiece({
+  position,
+  colors,
+  size = 0.9,
+  onClick,
+  isSelected,
+  pieceId,
+}) {
   const meshRef = useRef();
+
+  const handleClick = (event) => {
+    event.stopPropagation();
+    onClick(pieceId);
+  };
 
   return (
     <Box
       ref={meshRef}
       args={[size, size, size]}
       position={position}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <meshStandardMaterial
         color={colors[0] || "#333"}
@@ -49,19 +61,22 @@ function ColorPalette({ position, onColorSelect, onClose }) {
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
-      className="absolute z-50 bg-white rounded-lg shadow-xl p-3 border border-gray-200"
+      className="absolute z-50 bg-white rounded-lg shadow-xl p-4 border border-gray-200"
       style={{
         left: position.x,
         top: position.y,
         transform: "translate(-50%, -50%)",
       }}
     >
-      <div className="grid grid-cols-3 gap-2">
+      <div className="text-center mb-3">
+        <h3 className="font-semibold text-gray-800">Choose Color</h3>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
         {Object.entries(COLORS).map(([name, color]) => (
           <button
             key={color}
             onClick={() => onColorSelect(color)}
-            className="w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 transition-colors"
+            className="w-12 h-12 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-all hover:scale-110 shadow-md"
             style={{ backgroundColor: color }}
             title={COLOR_NAMES[color]}
           />
@@ -81,10 +96,10 @@ function ColorPalette({ position, onColorSelect, onClose }) {
 function RubiksCube3D({ cubeState, onPieceClick, selectedPiece }) {
   const groupRef = useRef();
 
-  useFrame((state) => {
-    // Gentle rotation
-    groupRef.current.rotation.y += 0.005;
-  });
+  // Remove auto-rotation - let user control it
+  // useFrame((state) => {
+  //   groupRef.current.rotation.y += 0.005;
+  // });
 
   // Generate cube pieces
   const generateCubePieces = () => {
@@ -129,9 +144,10 @@ function RubiksCube3D({ cubeState, onPieceClick, selectedPiece }) {
       {cubePieces.map((piece) => (
         <CubePiece
           key={piece.id}
+          pieceId={piece.id}
           position={piece.position}
           colors={piece.colors}
-          onClick={() => onPieceClick(piece.id)}
+          onClick={onPieceClick}
           isSelected={selectedPiece === piece.id}
         />
       ))}
@@ -149,13 +165,15 @@ export default function InteractiveCube({
   const [palettePosition, setPalettePosition] = useState({ x: 0, y: 0 });
   const [showPalette, setShowPalette] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [coloredPieces, setColoredPieces] = useState(new Set());
 
   const handlePieceClick = useCallback((pieceId) => {
     setSelectedPiece(pieceId);
 
-    // Calculate palette position (this would need to be adjusted based on actual piece position)
-    const rect = document.querySelector("canvas")?.getBoundingClientRect();
-    if (rect) {
+    // Calculate palette position based on mouse position
+    const canvas = document.querySelector("canvas");
+    if (canvas) {
+      const rect = canvas.getBoundingClientRect();
       setPalettePosition({
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2,
@@ -168,16 +186,25 @@ export default function InteractiveCube({
   const handleColorSelect = useCallback(
     (color) => {
       if (selectedPiece !== null) {
+        // Add to colored pieces
+        const newColoredPieces = new Set(coloredPieces);
+        newColoredPieces.add(selectedPiece);
+        setColoredPieces(newColoredPieces);
+
         // Update cube state (simplified - in reality you'd update the specific piece)
         const newCubeState = { ...cubeState };
-        // This is a placeholder - you'd need to map pieceId to actual face/position
         onCubeStateChange(newCubeState);
+
+        // Check if all pieces are colored (27 pieces total)
+        if (newColoredPieces.size >= 27) {
+          setIsComplete(true);
+        }
       }
 
       setShowPalette(false);
       setSelectedPiece(null);
     },
-    [selectedPiece, cubeState, onCubeStateChange]
+    [selectedPiece, cubeState, onCubeStateChange, coloredPieces]
   );
 
   const handlePaletteClose = useCallback(() => {
@@ -185,22 +212,16 @@ export default function InteractiveCube({
     setSelectedPiece(null);
   }, []);
 
-  const checkIfComplete = useCallback(() => {
-    // Check if all pieces have been colored
-    // This is a simplified check
-    setIsComplete(true);
-  }, []);
-
   return (
     <div className="relative w-full h-full">
       {/* 3D Cube Canvas */}
-      <div className="w-full h-96 md:h-[500px]">
+      <div className="w-full h-96 md:h-[500px] bg-gray-50 rounded-lg border-2 border-gray-200">
         <Canvas
           camera={{ position: [5, 5, 5], fov: 75 }}
           className="w-full h-full"
         >
-          <ambientLight intensity={0.6} />
-          <pointLight position={[10, 10, 10]} intensity={1} />
+          <ambientLight intensity={0.7} />
+          <pointLight position={[10, 10, 10]} intensity={1.2} />
           <RubiksCube3D
             cubeState={cubeState}
             onPieceClick={handlePieceClick}
@@ -210,6 +231,8 @@ export default function InteractiveCube({
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
+            autoRotate={false}
+            autoRotateSpeed={0}
           />
         </Canvas>
       </div>
@@ -225,11 +248,25 @@ export default function InteractiveCube({
         )}
       </AnimatePresence>
 
-      {/* Instructions */}
+      {/* Instructions and Progress */}
       <div className="mt-6 text-center">
-        <p className="text-gray-600 mb-4">
-          Click on any square to select a color, then choose from the palette
-        </p>
+        <div className="mb-4">
+          <p className="text-gray-600 mb-2">
+            Click on any square to select a color, then choose from the palette
+          </p>
+          <div className="flex justify-center items-center gap-2">
+            <span className="text-sm text-gray-500">Progress:</span>
+            <div className="w-32 bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(coloredPieces.size / 27) * 100}%` }}
+              ></div>
+            </div>
+            <span className="text-sm text-gray-500">
+              {coloredPieces.size}/27
+            </span>
+          </div>
+        </div>
 
         {/* Solve Button */}
         <motion.button
@@ -237,7 +274,7 @@ export default function InteractiveCube({
           whileTap={{ scale: 0.95 }}
           onClick={onSolve}
           disabled={!isComplete || isSolving}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold text-lg"
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold text-lg shadow-lg"
         >
           {isSolving ? "Solving..." : "🧩 Solve Cube"}
         </motion.button>

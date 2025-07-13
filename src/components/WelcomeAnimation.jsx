@@ -7,8 +7,8 @@ function SpinningCube() {
   const meshRef = React.useRef();
 
   useFrame((state) => {
-    meshRef.current.rotation.x += 0.01;
-    meshRef.current.rotation.y += 0.01;
+    meshRef.current.rotation.x += 0.008;
+    meshRef.current.rotation.y += 0.008;
   });
 
   return (
@@ -25,16 +25,16 @@ export default function WelcomeAnimation({ onComplete }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContent(true);
-    }, 500);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     const steps = [
-      { text: "Welcome to", delay: 1000 },
-      { text: "Rubik's Cube Solver", delay: 1500 },
-      { text: "Let's solve together!", delay: 2000 },
+      { text: "Welcome to", delay: 1200 },
+      { text: "Rubik's Cube Solver", delay: 1800 },
+      { text: "Let's solve together!", delay: 1500 },
     ];
 
     const stepTimer = setTimeout(() => {
@@ -43,9 +43,9 @@ export default function WelcomeAnimation({ onComplete }) {
       } else {
         setTimeout(() => {
           onComplete();
-        }, 1000);
+        }, 1500);
       }
-    }, steps[currentStep]?.delay || 1000);
+    }, steps[currentStep]?.delay || 1200);
 
     return () => clearTimeout(stepTimer);
   }, [currentStep, onComplete]);
@@ -61,36 +61,83 @@ export default function WelcomeAnimation({ onComplete }) {
     >
       <div className="text-center">
         {/* 3D Cube */}
-        <div className="w-64 h-64 mb-8">
+        <motion.div
+          className="w-64 h-64 mb-8"
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        >
           <Canvas camera={{ position: [3, 3, 3], fov: 75 }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
+            <ambientLight intensity={0.6} />
+            <pointLight position={[10, 10, 10]} intensity={1.2} />
             <SpinningCube />
-            <OrbitControls enableZoom={false} enablePan={false} />
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              enableRotate={false}
+            />
           </Canvas>
-        </div>
+        </motion.div>
 
         {/* Text Animation */}
         <AnimatePresence mode="wait">
           <motion.h1
             key={currentStep}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-4"
+            initial={{ opacity: 0, y: 30, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg"
           >
             {steps[currentStep]}
           </motion.h1>
         </AnimatePresence>
 
-        {/* Loading Dots */}
+        {/* Loading Animation */}
         <motion.div
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-white text-lg"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="flex justify-center items-center gap-2"
         >
-          Loading...
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="w-3 h-3 bg-white rounded-full"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              delay: 0.2,
+              ease: "easeInOut",
+            }}
+            className="w-3 h-3 bg-white rounded-full"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              delay: 0.4,
+              ease: "easeInOut",
+            }}
+            className="w-3 h-3 bg-white rounded-full"
+          />
         </motion.div>
       </div>
     </motion.div>
