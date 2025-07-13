@@ -25,7 +25,7 @@ const COLOR_NAMES = {
 // Individual cube piece component
 function CubePiece({
   position,
-  colors,
+  color,
   size = 0.9,
   onClick,
   isSelected,
@@ -46,7 +46,7 @@ function CubePiece({
       onClick={handleClick}
     >
       <meshStandardMaterial
-        color={colors[0] || "#333"}
+        color={color || "#333"}
         transparent
         opacity={isSelected ? 0.8 : 1}
       />
@@ -93,13 +93,8 @@ function ColorPalette({ position, onColorSelect, onClose }) {
 }
 
 // Main 3D cube component
-function RubiksCube3D({ cubeState, onPieceClick, selectedPiece }) {
+function RubiksCube3D({ pieceColors, onPieceClick, selectedPiece }) {
   const groupRef = useRef();
-
-  // Remove auto-rotation - let user control it
-  // useFrame((state) => {
-  //   groupRef.current.rotation.y += 0.005;
-  // });
 
   // Generate cube pieces
   const generateCubePieces = () => {
@@ -115,22 +110,12 @@ function RubiksCube3D({ cubeState, onPieceClick, selectedPiece }) {
       }
     }
 
-    // Create pieces with appropriate colors
+    // Create pieces with colors from state
     positions.forEach(([x, y, z], index) => {
-      const pieceColors = [];
-
-      // Determine which faces are visible for this piece
-      if (x === 1) pieceColors.push(COLORS.BLUE); // Right face
-      if (x === -1) pieceColors.push(COLORS.GREEN); // Left face
-      if (y === 1) pieceColors.push(COLORS.WHITE); // Top face
-      if (y === -1) pieceColors.push(COLORS.YELLOW); // Bottom face
-      if (z === 1) pieceColors.push(COLORS.RED); // Front face
-      if (z === -1) pieceColors.push(COLORS.ORANGE); // Back face
-
       pieces.push({
         id: index,
         position: [x, y, z],
-        colors: pieceColors,
+        color: pieceColors[index] || "#333", // Default gray if no color set
       });
     });
 
@@ -146,7 +131,7 @@ function RubiksCube3D({ cubeState, onPieceClick, selectedPiece }) {
           key={piece.id}
           pieceId={piece.id}
           position={piece.position}
-          colors={piece.colors}
+          color={piece.color}
           onClick={onPieceClick}
           isSelected={selectedPiece === piece.id}
         />
@@ -165,7 +150,7 @@ export default function InteractiveCube({
   const [palettePosition, setPalettePosition] = useState({ x: 0, y: 0 });
   const [showPalette, setShowPalette] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [coloredPieces, setColoredPieces] = useState(new Set());
+  const [pieceColors, setPieceColors] = useState({}); // Store colors for each piece
 
   const handlePieceClick = useCallback((pieceId) => {
     setSelectedPiece(pieceId);
@@ -186,31 +171,34 @@ export default function InteractiveCube({
   const handleColorSelect = useCallback(
     (color) => {
       if (selectedPiece !== null) {
-        // Add to colored pieces
-        const newColoredPieces = new Set(coloredPieces);
-        newColoredPieces.add(selectedPiece);
-        setColoredPieces(newColoredPieces);
-
-        // Update cube state (simplified - in reality you'd update the specific piece)
-        const newCubeState = { ...cubeState };
-        onCubeStateChange(newCubeState);
+        // Update piece colors
+        const newPieceColors = { ...pieceColors };
+        newPieceColors[selectedPiece] = color;
+        setPieceColors(newPieceColors);
 
         // Check if all pieces are colored (27 pieces total)
-        if (newColoredPieces.size >= 27) {
+        const coloredCount = Object.keys(newPieceColors).length;
+        if (coloredCount >= 27) {
           setIsComplete(true);
         }
+
+        // Update cube state
+        const newCubeState = { ...cubeState };
+        onCubeStateChange(newCubeState);
       }
 
       setShowPalette(false);
       setSelectedPiece(null);
     },
-    [selectedPiece, cubeState, onCubeStateChange, coloredPieces]
+    [selectedPiece, pieceColors, cubeState, onCubeStateChange]
   );
 
   const handlePaletteClose = useCallback(() => {
     setShowPalette(false);
     setSelectedPiece(null);
   }, []);
+
+  const coloredCount = Object.keys(pieceColors).length;
 
   return (
     <div className="relative w-full h-full">
@@ -223,7 +211,7 @@ export default function InteractiveCube({
           <ambientLight intensity={0.7} />
           <pointLight position={[10, 10, 10]} intensity={1.2} />
           <RubiksCube3D
-            cubeState={cubeState}
+            pieceColors={pieceColors}
             onPieceClick={handlePieceClick}
             selectedPiece={selectedPiece}
           />
@@ -259,12 +247,10 @@ export default function InteractiveCube({
             <div className="w-32 bg-gray-200 rounded-full h-2">
               <div
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(coloredPieces.size / 27) * 100}%` }}
+                style={{ width: `${(coloredCount / 27) * 100}%` }}
               ></div>
             </div>
-            <span className="text-sm text-gray-500">
-              {coloredPieces.size}/27
-            </span>
+            <span className="text-sm text-gray-500">{coloredCount}/27</span>
           </div>
         </div>
 

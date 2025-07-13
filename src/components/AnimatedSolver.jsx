@@ -215,34 +215,36 @@ export default function AnimatedSolver({ solution, onComplete }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center z-50">
-      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold">🧩 Solving Animation</h2>
-              <p className="text-blue-100 mt-1">
-                Watch the magic happen in real-time 3D
-              </p>
-            </div>
-            <button
-              onClick={() => onComplete?.()}
-              className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
-            >
-              <span className="text-xl font-bold">×</span>
-            </button>
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 z-50">
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 md:p-6 z-10">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold">
+              🧩 Solving Animation
+            </h2>
+            <p className="text-blue-100 mt-1 text-sm md:text-base">
+              Watch the magic happen in real-time 3D
+            </p>
           </div>
+          <button
+            onClick={() => onComplete?.()}
+            className="w-8 h-8 md:w-10 md:h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+          >
+            <span className="text-lg md:text-xl font-bold">×</span>
+          </button>
         </div>
+      </div>
 
-        {/* Progress Bar */}
-        <div className="p-6 bg-gray-50 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-gray-700">
+      {/* Progress Bar */}
+      <div className="absolute top-16 md:top-20 left-0 right-0 bg-gray-50/90 backdrop-blur-sm border-b border-gray-200 p-3 md:p-4 z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-2 md:mb-3">
+            <span className="text-xs md:text-sm font-semibold text-gray-700">
               Step {currentStep + 1} of {solutionData.steps.length} • Move{" "}
               {currentMove + 1} of {currentStepData?.moves.length || 0}
             </span>
-            <span className="text-sm text-gray-500 font-medium">
+            <span className="text-xs md:text-sm text-gray-500 font-medium">
               {Math.round(
                 (currentStep * 100 +
                   (currentMove / (currentStepData?.moves.length || 1)) * 100) /
@@ -251,9 +253,9 @@ export default function AnimatedSolver({ solution, onComplete }) {
               % Complete
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-gray-200 rounded-full h-2 md:h-3 overflow-hidden">
             <motion.div
-              className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full"
+              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 md:h-3 rounded-full"
               initial={{ width: 0 }}
               animate={{
                 width: `${
@@ -267,115 +269,117 @@ export default function AnimatedSolver({ solution, onComplete }) {
             />
           </div>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="flex flex-col lg:flex-row h-[600px]">
-          {/* 3D Cube Animation */}
-          <div className="flex-1 p-6">
-            <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200 overflow-hidden">
-              <Canvas
-                camera={{ position: [5, 5, 5], fov: 75 }}
-                className="w-full h-full"
-              >
-                <ambientLight intensity={0.8} />
-                <pointLight position={[10, 10, 10]} intensity={1.5} />
-                <AnimatedRubiksCube
-                  cubeState={{}}
-                  currentMove={currentMoveData}
-                  moveProgress={moveProgress}
-                />
-                <OrbitControls
-                  enablePan={true}
-                  enableZoom={true}
-                  enableRotate={true}
-                  autoRotate={false}
-                />
-              </Canvas>
+      {/* Main Content */}
+      <div className="flex flex-col lg:flex-row h-full pt-24 md:pt-28">
+        {/* 3D Cube Animation */}
+        <div className="flex-1 p-2 md:p-4 lg:p-6">
+          <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200 overflow-hidden">
+            <Canvas
+              camera={{ position: [5, 5, 5], fov: 75 }}
+              className="w-full h-full"
+            >
+              <ambientLight intensity={0.8} />
+              <pointLight position={[10, 10, 10]} intensity={1.5} />
+              <AnimatedRubiksCube
+                cubeState={{}}
+                currentMove={currentMoveData}
+                moveProgress={moveProgress}
+              />
+              <OrbitControls
+                enablePan={true}
+                enableZoom={true}
+                enableRotate={true}
+                autoRotate={false}
+              />
+            </Canvas>
+          </div>
+        </div>
+
+        {/* Control Panel */}
+        <div className="w-full lg:w-80 xl:w-96 p-3 md:p-4 lg:p-6 bg-gray-50/95 backdrop-blur-sm border-l border-gray-200 overflow-y-auto">
+          {/* Current Step Info */}
+          <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm mb-4 md:mb-6">
+            <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-2">
+              {currentStepData?.name.toUpperCase()}
+            </h3>
+            <p className="text-gray-600 mb-4 text-sm md:text-base">
+              {currentStepData?.description}
+            </p>
+
+            {/* Current Move */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 md:p-4">
+              <h4 className="font-semibold text-gray-700 mb-2 text-sm md:text-base">
+                Current Move:
+              </h4>
+              <div className="text-2xl md:text-4xl font-mono font-bold text-center bg-white rounded-lg py-2 md:py-3 shadow-sm">
+                {currentMoveData || "Complete!"}
+              </div>
             </div>
           </div>
 
-          {/* Control Panel */}
-          <div className="w-full lg:w-96 p-6 bg-gray-50 border-l border-gray-200">
-            {/* Current Step Info */}
-            <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-2">
-                {currentStepData?.name.toUpperCase()}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                {currentStepData?.description}
-              </p>
-
-              {/* Current Move */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-700 mb-2">
-                  Current Move:
-                </h4>
-                <div className="text-4xl font-mono font-bold text-center bg-white rounded-lg py-3 shadow-sm">
-                  {currentMoveData || "Complete!"}
-                </div>
-              </div>
-            </div>
-
-            {/* Move Sequence */}
-            <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-              <h4 className="font-semibold text-gray-700 mb-3">
-                Move Sequence:
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {currentStepData?.moves.map((move, index) => (
-                  <div
-                    key={index}
-                    className={`
-                      px-3 py-2 rounded-lg font-mono text-sm font-bold transition-all
-                      ${
-                        index === currentMove
-                          ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-110"
-                          : index < currentMove
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-600"
-                      }
-                    `}
-                  >
-                    {move}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Controls */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h4 className="font-semibold text-gray-700 mb-4">Controls</h4>
-
-              <div className="space-y-3">
-                <button
-                  onClick={handlePlayPause}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all font-semibold"
+          {/* Move Sequence */}
+          <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm mb-4 md:mb-6">
+            <h4 className="font-semibold text-gray-700 mb-3 text-sm md:text-base">
+              Move Sequence:
+            </h4>
+            <div className="flex flex-wrap gap-1 md:gap-2">
+              {currentStepData?.moves.map((move, index) => (
+                <div
+                  key={index}
+                  className={`
+                    px-2 md:px-3 py-1 md:py-2 rounded-lg font-mono text-xs md:text-sm font-bold transition-all
+                    ${
+                      index === currentMove
+                        ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-110"
+                        : index < currentMove
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-600"
+                    }
+                  `}
                 >
-                  {isPlaying ? "⏸️ Pause" : "▶️ Play"}
-                </button>
-
-                <button
-                  onClick={handleReset}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all font-semibold"
-                >
-                  🔄 Reset
-                </button>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-gray-600">
-                    Speed:
-                  </span>
-                  <select
-                    value={speed}
-                    onChange={(e) => handleSpeedChange(Number(e.target.value))}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value={0.5}>0.5x (Slow)</option>
-                    <option value={1}>1x (Normal)</option>
-                    <option value={2}>2x (Fast)</option>
-                    <option value={4}>4x (Very Fast)</option>
-                  </select>
+                  {move}
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm">
+            <h4 className="font-semibold text-gray-700 mb-4 text-sm md:text-base">
+              Controls
+            </h4>
+
+            <div className="space-y-3">
+              <button
+                onClick={handlePlayPause}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 md:py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all font-semibold text-sm md:text-base"
+              >
+                {isPlaying ? "⏸️ Pause" : "▶️ Play"}
+              </button>
+
+              <button
+                onClick={handleReset}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 md:py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all font-semibold text-sm md:text-base"
+              >
+                🔄 Reset
+              </button>
+
+              <div className="flex items-center gap-3">
+                <span className="text-xs md:text-sm font-medium text-gray-600">
+                  Speed:
+                </span>
+                <select
+                  value={speed}
+                  onChange={(e) => handleSpeedChange(Number(e.target.value))}
+                  className="flex-1 px-2 md:px-3 py-1 md:py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs md:text-sm"
+                >
+                  <option value={0.5}>0.5x (Slow)</option>
+                  <option value={1}>1x (Normal)</option>
+                  <option value={2}>2x (Fast)</option>
+                  <option value={4}>4x (Very Fast)</option>
+                </select>
               </div>
             </div>
           </div>

@@ -59,15 +59,18 @@ export default function WelcomeAnimation({ onComplete }) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center z-50"
     >
-      <div className="text-center">
+      <div className="text-center max-w-4xl mx-auto px-4">
         {/* 3D Cube */}
         <motion.div
-          className="w-64 h-64 mb-8"
+          className="w-80 h-80 md:w-96 md:h-96 mx-auto mb-12"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
         >
-          <Canvas camera={{ position: [3, 3, 3], fov: 75 }}>
+          <Canvas
+            camera={{ position: [3, 3, 3], fov: 75 }}
+            className="w-full h-full"
+          >
             <ambientLight intensity={0.6} />
             <pointLight position={[10, 10, 10]} intensity={1.2} />
             <SpinningCube />
@@ -87,7 +90,7 @@ export default function WelcomeAnimation({ onComplete }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -30, scale: 0.8 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg"
+            className="text-5xl md:text-7xl font-bold text-white mb-8 drop-shadow-lg leading-tight"
           >
             {steps[currentStep]}
           </motion.h1>
@@ -98,11 +101,11 @@ export default function WelcomeAnimation({ onComplete }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="flex justify-center items-center gap-2"
+          className="flex justify-center items-center gap-3"
         >
           <motion.div
             animate={{
-              scale: [1, 1.2, 1],
+              scale: [1, 1.3, 1],
               opacity: [0.5, 1, 0.5],
             }}
             transition={{
@@ -110,11 +113,11 @@ export default function WelcomeAnimation({ onComplete }) {
               repeat: Infinity,
               ease: "easeInOut",
             }}
-            className="w-3 h-3 bg-white rounded-full"
+            className="w-4 h-4 bg-white rounded-full"
           />
           <motion.div
             animate={{
-              scale: [1, 1.2, 1],
+              scale: [1, 1.3, 1],
               opacity: [0.5, 1, 0.5],
             }}
             transition={{
@@ -123,11 +126,11 @@ export default function WelcomeAnimation({ onComplete }) {
               delay: 0.2,
               ease: "easeInOut",
             }}
-            className="w-3 h-3 bg-white rounded-full"
+            className="w-4 h-4 bg-white rounded-full"
           />
           <motion.div
             animate={{
-              scale: [1, 1.2, 1],
+              scale: [1, 1.3, 1],
               opacity: [0.5, 1, 0.5],
             }}
             transition={{
@@ -136,7 +139,7 @@ export default function WelcomeAnimation({ onComplete }) {
               delay: 0.4,
               ease: "easeInOut",
             }}
-            className="w-3 h-3 bg-white rounded-full"
+            className="w-4 h-4 bg-white rounded-full"
           />
         </motion.div>
       </div>
