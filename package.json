@@ -2,6 +2,7 @@
   "name": "rubiks-cube-solver",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://syddhartha69.github.io/Rubik-s-cube-Solver",
   "type": "module",
   "scripts": {
     "dev": "vite",
