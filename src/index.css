@@ -1,13 +1,16 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
 
-  color-scheme: light dark;
+  color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #0a0a0a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,56 +18,292 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+* {
+  box-sizing: border-box;
 }
-a:hover {
-  color: #535bf2;
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  color: rgba(255, 255, 255, 0.87);
+  overflow-x: hidden;
+}
+
+/* Modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #535bf2;
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: clamp(2.5rem, 5vw, 4rem);
   line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  line-height: 1.3;
+  font-weight: 600;
 }
 
 button {
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  padding: 0.75em 1.5em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.87);
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+button:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Modern focus styles */
+*:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Glass morphism effects */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Modern animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
   }
-  a:hover {
-    color: #747bff;
+  50% {
+    transform: translateY(-10px);
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
   }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility classes */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.gradient-animate {
+  background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+/* Modern button styles */
+.btn-modern {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-modern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn-modern:hover::before {
+  left: 100%;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: blur(5px);
+  }
+
+  .btn-modern {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  body {
+    padding: 1rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .glass {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom classes for consistent text colors */
+.text-primary {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.text-secondary {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.bg-primary {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.bg-secondary {
+  background-color: rgba(0, 0, 0, 0.2) !important;
 }

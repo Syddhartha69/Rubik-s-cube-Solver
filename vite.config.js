@@ -1,9 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/Rubik-s-cube-Solver/",
-  plugins: [react(), tailwindcss()],
+  base: "/",
+  plugins: [react()],
 });
